@@ -78,7 +78,28 @@ La siguiente etapa contempla:
 - Persistencia real
 - Integración frontend/backend
 
-## Estructura del proyecto
+El frontend se encuentra organizado por responsabilidad:
+
+- **components/**: componentes reutilizables de la interfaz.
+- **pages/**: vistas principales del sistema.
+- **data/**: datos ficticios utilizados durante la etapa de prototipado.
+- **App.jsx**: componente principal encargado de coordinar el estado general de la aplicación.
+- **main.jsx**: punto de entrada de React.
+- **index.css**: estilos globales y ajustes responsive.
+
+## Componentes principales
+
+| Archivo | Función |
+|---|---|
+| `AppNavbar.jsx` | Barra de navegación y selección de rol simulado |
+| `CandidatoCard.jsx` | Presentación resumida de candidatos |
+| `EstadoBadge.jsx` | Representación visual del estado de una solicitud |
+| `IndicadorCard.jsx` | Tarjetas de indicadores utilizadas en el dashboard |
+| `SolicitudCard.jsx` | Presentación resumida de solicitudes |
+| `CandidatosPage.jsx` | Registro, edición y consulta de candidatos |
+| `DashboardPage.jsx` | Indicadores y resumen general del proceso |
+| `SolicitudesPage.jsx` | Creación, búsqueda, filtrado y gestión de solicitudes |
+| `mockData.js` | Datos ficticios utilizados para demostrar el funcionamiento del MVP |
 
 ## 📁 Estructura del proyecto
 
