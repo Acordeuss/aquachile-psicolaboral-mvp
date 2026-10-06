@@ -80,11 +80,38 @@ La siguiente etapa contempla:
 
 ## Estructura del proyecto
 
+## 📁 Estructura del proyecto
+
 ```text
-src/
-├── components/
-├── data/
-├── pages/
-├── App.jsx
-├── index.css
-└── main.jsx
+aquachile-psicolaboral-mvp/
+│
+├── public/
+│
+├── src/
+│   │
+│   ├── components/
+│   │   ├── AppNavbar.jsx
+│   │   ├── CandidatoCard.jsx
+│   │   ├── EstadoBadge.jsx
+│   │   ├── IndicadorCard.jsx
+│   │   └── SolicitudCard.jsx
+│   │
+│   ├── data/
+│   │   └── mockData.js
+│   │
+│   ├── pages/
+│   │   ├── CandidatosPage.jsx
+│   │   ├── DashboardPage.jsx
+│   │   └── SolicitudesPage.jsx
+│   │
+│   ├── App.jsx
+│   ├── index.css
+│   └── main.jsx
+│
+├── .gitignore
+├── eslint.config.js
+├── index.html
+├── package.json
+├── package-lock.json
+├── README.md
+└── vite.config.js
