@@ -1,6 +1,16 @@
 import { useState } from "react";
 import EstadoBadge from "../components/EstadoBadge";
 
+function obtenerFechaActualLocal() {
+  const hoy = new Date();
+
+  const anio = hoy.getFullYear();
+  const mes = String(hoy.getMonth() + 1).padStart(2, "0");
+  const dia = String(hoy.getDate()).padStart(2, "0");
+
+  return `${anio}-${mes}-${dia}`;
+}
+
 function SolicitudesPage({
   candidatos,
   solicitudes,
@@ -14,10 +24,16 @@ function SolicitudesPage({
   const [mensaje, setMensaje] =
     useState("");
 
+  const [mensajeEvaluacion, setMensajeEvaluacion] =
+    useState("");
+
   const [busqueda, setBusqueda] =
     useState("");
 
   const [filtroEstado, setFiltroEstado] =
+    useState("");
+
+  const [filtroFecha, setFiltroFecha] =
     useState("");
 
   const [
@@ -29,9 +45,7 @@ function SolicitudesPage({
     useState({
       candidatoId: "",
       responsable: "",
-      fechaSolicitud: new Date()
-        .toISOString()
-        .split("T")[0]
+      fechaSolicitud: obtenerFechaActualLocal()
     });
 
   const esAnalista =
@@ -105,22 +119,26 @@ function SolicitudesPage({
     setFormulario({
       candidatoId: "",
       responsable: "",
-      fechaSolicitud: new Date()
-        .toISOString()
-        .split("T")[0]
+      fechaSolicitud:
+        obtenerFechaActualLocal()
     });
 
     setMostrarFormulario(false);
+    setMensaje("");
   }
 
   function abrirGestion(solicitud) {
+    setMensajeEvaluacion("");
+
     setSolicitudSeleccionada({
       ...solicitud
     });
 
     setTimeout(() => {
       document
-        .getElementById("gestion-evaluacion")
+        .getElementById(
+          "gestion-evaluacion"
+        )
         ?.scrollIntoView({
           behavior: "smooth"
         });
@@ -128,7 +146,8 @@ function SolicitudesPage({
   }
 
   function cambiarGestion(evento) {
-    const { name, value } = evento.target;
+    const { name, value } =
+      evento.target;
 
     setSolicitudSeleccionada({
       ...solicitudSeleccionada,
@@ -139,57 +158,90 @@ function SolicitudesPage({
   function guardarEvaluacion(evento) {
     evento.preventDefault();
 
-    if (!solicitudSeleccionada) {
+    setMensajeEvaluacion("");
+
+    if (
+      !esEvaluador ||
+      !solicitudSeleccionada
+    ) {
       return;
     }
 
     if (
-      solicitudSeleccionada.estado !== "Pendiente" &&
-      !solicitudSeleccionada.fechaEvaluacion
+      solicitudSeleccionada.estado !==
+        "Pendiente" &&
+      !solicitudSeleccionada
+        .fechaEvaluacion
     ) {
-      alert(
-        "Debe ingresar la fecha de evaluación."
+      setMensajeEvaluacion(
+        "Debe ingresar la fecha de evaluación para continuar con este estado."
       );
       return;
     }
 
     if (
-      solicitudSeleccionada.estado === "Finalizada" &&
-      !solicitudSeleccionada.observaciones.trim()
+      solicitudSeleccionada.estado ===
+        "Finalizada" &&
+      !(
+        solicitudSeleccionada
+          .observaciones || ""
+      ).trim()
     ) {
-      alert(
-        "Para finalizar una evaluación debe registrar observaciones o resultado."
+      setMensajeEvaluacion(
+        "Para finalizar una evaluación debe registrar observaciones o un resultado general."
       );
       return;
     }
 
-    onActualizar(
-      solicitudSeleccionada
-    );
+    onActualizar({
+      ...solicitudSeleccionada,
+      observaciones: (
+        solicitudSeleccionada
+          .observaciones || ""
+      ).trim()
+    });
 
     setSolicitudSeleccionada(null);
+    setMensajeEvaluacion("");
   }
 
   const solicitudesFiltradas =
-    solicitudes.filter(solicitud => {
-      const texto =
-        `${solicitud.candidatoNombre} ${solicitud.cargo} ${solicitud.responsable}`
-          .toLowerCase();
+    solicitudes.filter(
+      solicitud => {
+        const texto =
+          `${
+            solicitud.candidatoNombre
+          } ${
+            solicitud.cargo
+          } ${
+            solicitud.familiaCargo
+          } ${
+            solicitud.responsable
+          }`
+            .toLowerCase();
 
-      const coincideBusqueda =
-        texto.includes(
-          busqueda.toLowerCase()
+        const coincideBusqueda =
+          texto.includes(
+            busqueda.toLowerCase()
+          );
+
+        const coincideEstado =
+          !filtroEstado ||
+          solicitud.estado ===
+            filtroEstado;
+
+        const coincideFecha =
+          !filtroFecha ||
+          solicitud.fechaSolicitud ===
+            filtroFecha;
+
+        return (
+          coincideBusqueda &&
+          coincideEstado &&
+          coincideFecha
         );
-
-      const coincideEstado =
-        !filtroEstado ||
-        solicitud.estado === filtroEstado;
-
-      return (
-        coincideBusqueda &&
-        coincideEstado
-      );
-    });
+      }
+    );
 
   return (
     <section
@@ -210,8 +262,8 @@ function SolicitudesPage({
             </h2>
 
             <p className="text-secondary mb-0">
-              Gestión del proceso de evaluación
-              psicolaboral.
+              Gestión del proceso de
+              evaluación psicolaboral.
             </p>
           </div>
 
@@ -235,18 +287,32 @@ function SolicitudesPage({
 
         {esEvaluador && (
           <div className="alert alert-info">
-            Como Profesional Evaluador puedes
-            consultar solicitudes y gestionar
-            evaluaciones asignadas.
+            Como Profesional Evaluador
+            puedes consultar solicitudes,
+            registrar información de
+            evaluación y actualizar sus
+            estados.
           </div>
         )}
 
-        {mostrarFormulario && esAnalista && (
+        {esAnalista && (
+          <div className="alert alert-light border">
+            Como Analista de Reclutamiento
+            puedes crear solicitudes,
+            consultar registros y revisar
+            sus detalles.
+          </div>
+        )}
+
+        {mostrarFormulario &&
+          esAnalista && (
           <div className="card border-0 shadow-sm mb-4">
+
             <div className="card-body p-4">
 
               <h3 className="h5 mb-4">
-                Crear solicitud de evaluación
+                Crear solicitud de
+                evaluación
               </h3>
 
               {mensaje && (
@@ -255,14 +321,19 @@ function SolicitudesPage({
                 </div>
               )}
 
-              {candidatos.length === 0 ? (
+              {candidatos.length ===
+              0 ? (
                 <div className="alert alert-warning">
-                  Debe registrar al menos un candidato
-                  antes de crear una solicitud.
+                  Debe registrar al menos
+                  un candidato antes de
+                  crear una solicitud.
                 </div>
               ) : (
-                <form onSubmit={crearSolicitud}>
-
+                <form
+                  onSubmit={
+                    crearSolicitud
+                  }
+                >
                   <div className="row g-3">
 
                     <div className="col-lg-5">
@@ -274,7 +345,8 @@ function SolicitudesPage({
                         name="candidatoId"
                         className="form-select"
                         value={
-                          formulario.candidatoId
+                          formulario
+                            .candidatoId
                         }
                         onChange={
                           manejarFormulario
@@ -287,12 +359,20 @@ function SolicitudesPage({
                         {candidatos.map(
                           candidato => (
                             <option
-                              key={candidato.id}
-                              value={candidato.id}
+                              key={
+                                candidato.id
+                              }
+                              value={
+                                candidato.id
+                              }
                             >
-                              {candidato.nombre}
+                              {
+                                candidato.nombre
+                              }
                               {" — "}
-                              {candidato.cargo}
+                              {
+                                candidato.cargo
+                              }
                             </option>
                           )
                         )}
@@ -301,7 +381,8 @@ function SolicitudesPage({
 
                     <div className="col-lg-4">
                       <label className="form-label">
-                        Profesional responsable
+                        Profesional
+                        responsable
                       </label>
 
                       <input
@@ -309,7 +390,8 @@ function SolicitudesPage({
                         name="responsable"
                         className="form-control"
                         value={
-                          formulario.responsable
+                          formulario
+                            .responsable
                         }
                         onChange={
                           manejarFormulario
@@ -328,7 +410,8 @@ function SolicitudesPage({
                         name="fechaSolicitud"
                         className="form-control"
                         value={
-                          formulario.fechaSolicitud
+                          formulario
+                            .fechaSolicitud
                         }
                         onChange={
                           manejarFormulario
@@ -344,7 +427,6 @@ function SolicitudesPage({
                   >
                     Crear solicitud
                   </button>
-
                 </form>
               )}
 
@@ -357,7 +439,7 @@ function SolicitudesPage({
 
             <div className="row g-3">
 
-              <div className="col-md-8">
+              <div className="col-lg-6">
                 <label className="form-label">
                   Buscar
                 </label>
@@ -365,17 +447,18 @@ function SolicitudesPage({
                 <input
                   type="search"
                   className="form-control"
-                  placeholder="Candidato, cargo o responsable..."
+                  placeholder="Candidato, cargo, familia o responsable..."
                   value={busqueda}
                   onChange={evento =>
                     setBusqueda(
-                      evento.target.value
+                      evento.target
+                        .value
                     )
                   }
                 />
               </div>
 
-              <div className="col-md-4">
+              <div className="col-md-6 col-lg-3">
                 <label className="form-label">
                   Estado
                 </label>
@@ -385,7 +468,8 @@ function SolicitudesPage({
                   value={filtroEstado}
                   onChange={evento =>
                     setFiltroEstado(
-                      evento.target.value
+                      evento.target
+                        .value
                     )
                   }
                 >
@@ -407,15 +491,57 @@ function SolicitudesPage({
                 </select>
               </div>
 
+              <div className="col-md-6 col-lg-3">
+                <label className="form-label">
+                  Fecha de solicitud
+                </label>
+
+                <input
+                  type="date"
+                  className="form-control"
+                  value={filtroFecha}
+                  onChange={evento =>
+                    setFiltroFecha(
+                      evento.target
+                        .value
+                    )
+                  }
+                />
+              </div>
+
             </div>
+
+            {(
+              busqueda ||
+              filtroEstado ||
+              filtroFecha
+            ) && (
+              <div className="mt-3">
+
+                <button
+                  type="button"
+                  className="btn btn-sm btn-outline-secondary"
+                  onClick={() => {
+                    setBusqueda("");
+                    setFiltroEstado("");
+                    setFiltroFecha("");
+                  }}
+                >
+                  Limpiar filtros
+                </button>
+
+              </div>
+            )}
 
           </div>
         </div>
 
         <div className="card border-0 shadow-sm mb-5">
+
           <div className="table-responsive">
 
             <table className="table table-hover align-middle mb-0">
+
               <thead className="table-light">
                 <tr>
                   <th>Candidato</th>
@@ -429,135 +555,197 @@ function SolicitudesPage({
               </thead>
 
               <tbody>
+
                 {solicitudesFiltradas.map(
                   solicitud => (
-                    <tr key={solicitud.id}>
+                    <tr
+                      key={
+                        solicitud.id
+                      }
+                    >
 
                       <td>
                         <strong>
                           {
-                            solicitud.candidatoNombre
+                            solicitud
+                              .candidatoNombre
                           }
                         </strong>
                       </td>
 
                       <td>
-                        {solicitud.cargo}
-                      </td>
-
-                      <td>
                         {
-                          solicitud.familiaCargo
+                          solicitud.cargo
                         }
                       </td>
 
                       <td>
                         {
-                          solicitud.fechaSolicitud
+                          solicitud
+                            .familiaCargo
                         }
                       </td>
 
                       <td>
                         {
-                          solicitud.responsable
+                          solicitud
+                            .fechaSolicitud
+                        }
+                      </td>
+
+                      <td>
+                        {
+                          solicitud
+                            .responsable
                         }
                       </td>
 
                       <td>
                         <EstadoBadge
                           estado={
-                            solicitud.estado
+                            solicitud
+                              .estado
                           }
                         />
                       </td>
 
                       <td className="text-end">
 
-                        {esEvaluador ? (
-                          <button
-                            type="button"
-                            className="btn btn-sm btn-outline-primary"
-                            onClick={() =>
-                              abrirGestion(
-                                solicitud
-                              )
-                            }
-                          >
-                            Gestionar
-                          </button>
-                        ) : (
-                          <span className="text-secondary small">
-                            Solo lectura
-                          </span>
-                        )}
+                        <button
+                          type="button"
+                          className="btn btn-sm btn-outline-primary"
+                          onClick={() =>
+                            abrirGestion(
+                              solicitud
+                            )
+                          }
+                        >
+                          {esEvaluador
+                            ? "Gestionar"
+                            : "Ver detalle"}
+                        </button>
 
                       </td>
 
                     </tr>
                   )
                 )}
+
               </tbody>
             </table>
 
-            {solicitudesFiltradas.length === 0 && (
+            {solicitudesFiltradas
+              .length === 0 && (
               <div className="text-center text-secondary py-5">
-                No se encontraron solicitudes.
+                No se encontraron
+                solicitudes.
               </div>
             )}
 
           </div>
         </div>
 
-        {solicitudSeleccionada &&
-          esEvaluador && (
+        {solicitudSeleccionada && (
           <div
             id="gestion-evaluacion"
             className="card border-0 shadow-sm"
           >
 
             <div className="card-header bg-dark text-white">
+
               <strong>
-                Gestión de evaluación
+                {esEvaluador
+                  ? "Gestión de evaluación"
+                  : "Detalle de solicitud"}
               </strong>
+
             </div>
 
             <div className="card-body p-4">
 
               <div className="mb-4">
 
-                <h3 className="h5 mb-1">
-                  {
-                    solicitudSeleccionada
-                      .candidatoNombre
-                  }
-                </h3>
+                <div className="d-flex flex-wrap justify-content-between align-items-start gap-2 mb-3">
 
-                <p className="text-secondary mb-1">
-                  {
-                    solicitudSeleccionada
-                      .cargo
-                  }
-                  {" · "}
-                  {
-                    solicitudSeleccionada
-                      .familiaCargo
-                  }
-                </p>
+                  <div>
+                    <h3 className="h5 mb-1">
+                      {
+                        solicitudSeleccionada
+                          .candidatoNombre
+                      }
+                    </h3>
 
-                <p className="small mb-0">
-                  <strong>
-                    Responsable:
-                  </strong>{" "}
-                  {
-                    solicitudSeleccionada
-                      .responsable
-                  }
-                </p>
+                    <p className="text-secondary mb-0">
+                      {
+                        solicitudSeleccionada
+                          .cargo
+                      }
+                      {" · "}
+                      {
+                        solicitudSeleccionada
+                          .familiaCargo
+                      }
+                    </p>
+                  </div>
+
+                  <EstadoBadge
+                    estado={
+                      solicitudSeleccionada
+                        .estado
+                    }
+                  />
+
+                </div>
+
+                <div className="row g-3">
+
+                  <div className="col-md-6">
+                    <p className="small mb-0">
+                      <strong>
+                        Responsable:
+                      </strong>{" "}
+                      {
+                        solicitudSeleccionada
+                          .responsable
+                      }
+                    </p>
+                  </div>
+
+                  <div className="col-md-6">
+                    <p className="small mb-0">
+                      <strong>
+                        Fecha de solicitud:
+                      </strong>{" "}
+                      {
+                        solicitudSeleccionada
+                          .fechaSolicitud
+                      }
+                    </p>
+                  </div>
+
+                </div>
 
               </div>
 
+              {!esEvaluador && (
+                <div className="alert alert-secondary">
+                  Vista de solo lectura.
+                  La actualización de la
+                  evaluación corresponde al
+                  Profesional Evaluador.
+                </div>
+              )}
+
+              {mensajeEvaluacion && (
+                <div className="alert alert-danger">
+                  {mensajeEvaluacion}
+                </div>
+              )}
+
               <form
-                onSubmit={guardarEvaluacion}
+                onSubmit={
+                  guardarEvaluacion
+                }
               >
 
                 <div className="row g-3">
@@ -573,6 +761,9 @@ function SolicitudesPage({
                       value={
                         solicitudSeleccionada
                           .estado
+                      }
+                      disabled={
+                        !esEvaluador
                       }
                       onChange={
                         cambiarGestion
@@ -606,6 +797,9 @@ function SolicitudesPage({
                           .fechaEvaluacion ||
                         ""
                       }
+                      disabled={
+                        !esEvaluador
+                      }
                       onChange={
                         cambiarGestion
                       }
@@ -614,8 +808,8 @@ function SolicitudesPage({
 
                   <div className="col-12">
                     <label className="form-label">
-                      Observaciones o resultado
-                      general
+                      Observaciones o
+                      resultado general
                     </label>
 
                     <textarea
@@ -626,6 +820,9 @@ function SolicitudesPage({
                         solicitudSeleccionada
                           .observaciones ||
                         ""
+                      }
+                      disabled={
+                        !esEvaluador
                       }
                       onChange={
                         cambiarGestion
@@ -638,23 +835,31 @@ function SolicitudesPage({
 
                 <div className="d-flex gap-2 mt-4">
 
-                  <button
-                    type="submit"
-                    className="btn btn-success"
-                  >
-                    Guardar evaluación
-                  </button>
+                  {esEvaluador && (
+                    <button
+                      type="submit"
+                      className="btn btn-success"
+                    >
+                      Guardar evaluación
+                    </button>
+                  )}
 
                   <button
                     type="button"
                     className="btn btn-outline-secondary"
-                    onClick={() =>
+                    onClick={() => {
                       setSolicitudSeleccionada(
                         null
-                      )
-                    }
+                      );
+
+                      setMensajeEvaluacion(
+                        ""
+                      );
+                    }}
                   >
-                    Cancelar
+                    {esEvaluador
+                      ? "Cancelar"
+                      : "Cerrar"}
                   </button>
 
                 </div>
