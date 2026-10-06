@@ -1,0 +1,81 @@
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 70px;
+}
+
+body {
+  margin: 0;
+  font-family:
+    Inter,
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+  background: #f8f9fa;
+  color: #212529;
+}
+
+.page-section {
+  min-height: 60vh;
+}
+
+.card {
+  border-radius: 14px;
+}
+
+.indicador-card {
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.indicador-card:hover {
+  transform: translateY(-3px);
+}
+
+.table th {
+  white-space: nowrap;
+}
+
+.table td {
+  vertical-align: middle;
+}
+
+textarea {
+  resize: vertical;
+}
+
+.navbar-brand {
+  font-size: 1rem;
+}
+
+.form-control,
+.form-select,
+.btn {
+  border-radius: 8px;
+}
+
+section {
+  scroll-margin-top: 70px;
+}
+
+@media (max-width: 767px) {
+  .display-6 {
+    font-size: 1.8rem;
+  }
+
+  .container {
+    padding-left: 18px;
+    padding-right: 18px;
+  }
+
+  .navbar-brand {
+    font-size: 0.9rem;
+  }
+}
