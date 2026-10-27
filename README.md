@@ -1,107 +1,201 @@
-# AquaChile · MVP Gestión de Evaluaciones Psicolaborales
+# AquaChile · Gestión de Evaluaciones Psicolaborales
 
-Proyecto académico desarrollado para la asignatura **Full Stack II - DSY1104** de Duoc UC.
+MVP web académico desarrollado para la asignatura **Desarrollo Full Stack II (DSY1104)** de Duoc UC, en el contexto de **Vinculación con el Medio (VcM)**.
 
-El proyecto aborda un caso académico asociado a AquaChile y propone un MVP web para centralizar y organizar el proceso de evaluaciones psicolaborales.
+El proyecto aborda un caso académico asociado a AquaChile y propone una solución frontend para centralizar el registro de candidatos, la creación y seguimiento de solicitudes de evaluación psicolaboral y la consulta de indicadores del proceso.
 
-> Este repositorio corresponde exclusivamente a un proyecto académico y utiliza información ficticia o simulada. No representa un sistema oficial de AquaChile ni contiene datos internos o personales reales.
+> **Importante:** este repositorio corresponde exclusivamente a un proyecto académico. Utiliza datos ficticios o simulados y no representa un sistema oficial de AquaChile ni contiene información personal o interna real.
 
-## Objetivo
+---
 
-Desarrollar una aplicación web que permita gestionar de forma centralizada:
+## Objetivo del MVP
 
-- candidatos
-- solicitudes de evaluación
-- responsables
-- estados del proceso
-- fechas de evaluación
-- observaciones generales
-- indicadores del proceso
+Desarrollar una aplicación web en React que permita organizar y dar trazabilidad inicial al proceso de evaluaciones psicolaborales mediante un flujo centralizado:
 
-La solución busca demostrar cómo una aplicación Full Stack puede apoyar la digitalización inicial de un flujo administrativo.
+**Candidato → Solicitud → Responsable → Estado → Evaluación → Seguimiento**
 
-## Funcionalidades actuales
+La solución busca reducir la fragmentación de la información dentro del prototipo académico y demostrar un avance funcional coherente con los requerimientos del caso VcM.
 
-### Analista de Reclutamiento
+---
 
-- Registrar candidatos
-- Editar información de candidatos
-- Consultar candidatos
-- Crear solicitudes de evaluación
-- Consultar solicitudes
-- Buscar y filtrar registros
+## Funcionalidades implementadas
 
-### Profesional Evaluador
+### Dashboard
 
-- Consultar candidatos
-- Consultar solicitudes
-- Registrar fecha de evaluación
-- Agregar observaciones
-- Actualizar estado de la evaluación
+- Total de candidatos registrados.
+- Solicitudes pendientes.
+- Solicitudes en proceso.
+- Evaluaciones finalizadas.
+- Visualización de candidatos y solicitudes recientes.
+
+### Gestión de candidatos
+
+- Registro de candidatos.
+- Edición de información.
+- Consulta de candidatos.
+- Validación de campos obligatorios.
+- Validación de correo electrónico.
+- Validación básica de teléfono.
+
+### Gestión de solicitudes
+
+- Creación de solicitudes asociadas a un candidato.
+- Registro de responsable y fecha de solicitud.
+- Consulta del detalle.
+- Búsqueda por candidato, cargo, familia de cargo o responsable.
+- Filtro por estado.
+- Filtro por fecha.
+- Limpieza de filtros.
+- Actualización del estado de la evaluación.
+- Registro de fecha de evaluación.
+- Registro de observaciones o resultado general.
+
+### Roles simulados
+
+**Analista de Reclutamiento**
+
+- Registrar y editar candidatos.
+- Crear solicitudes.
+- Consultar candidatos y solicitudes.
+- Revisar detalles del proceso.
+
+**Profesional Evaluador**
+
+- Consultar candidatos y solicitudes.
+- Gestionar evaluaciones.
+- Actualizar estados.
+- Registrar fecha de evaluación.
+- Registrar observaciones o resultado general.
+
+---
 
 ## Estados del proceso
 
-- Pendiente
-- En proceso
-- Finalizada
+Las solicitudes utilizan tres estados principales:
 
-## Dashboard
+- `Pendiente`
+- `En proceso`
+- `Finalizada`
 
-La aplicación incluye indicadores dinámicos para:
+Los estados se representan visualmente mediante componentes reutilizables de Bootstrap.
 
-- Total de candidatos
-- Solicitudes pendientes
-- Solicitudes en proceso
-- Evaluaciones finalizadas
+---
+
+## Navegación
+
+La aplicación utiliza **React Router** para navegar entre las interfaces sin recargar completamente la página.
+
+| Ruta | Vista |
+|---|---|
+| `/` | Dashboard |
+| `/candidatos` | Gestión de candidatos |
+| `/solicitudes` | Gestión y seguimiento de solicitudes |
+
+Las rutas desconocidas redirigen automáticamente al Dashboard.
+
+---
+
+## Gestión de estado y persistencia
+
+El estado principal de candidatos, solicitudes y rol simulado se administra con `useState`.
+
+La aplicación utiliza `localStorage` como persistencia temporal del frontend, permitiendo mantener los cambios realizados durante la demostración aun después de recargar la página.
+
+Esta persistencia es únicamente parte del MVP frontend y será reemplazada por una base de datos real en una etapa posterior.
+
+---
+
+## Validaciones y lógica reutilizable
+
+Parte de la lógica fue separada de las vistas para facilitar su reutilización y prueba.
+
+```text
+src/utils/
+├── filtros.js
+├── indicadores.js
+└── validaciones.js
+```
+
+Estas funciones permiten:
+
+- Validar candidatos.
+- Validar cambios de estado de las evaluaciones.
+- Aplicar búsquedas y filtros.
+- Calcular los indicadores mostrados en el Dashboard.
+
+---
+
+## Pruebas unitarias con Vitest
+
+El proyecto incorpora pruebas unitarias para verificar comportamientos relevantes del frontend.
+
+Actualmente se prueban escenarios relacionados con:
+
+- Registro válido de candidato.
+- Campos obligatorios vacíos.
+- Correo electrónico inválido.
+- Evaluación en proceso sin fecha.
+- Evaluación finalizada sin observaciones.
+- Filtro por estado.
+- Búsqueda por candidato.
+- Filtro por fecha.
+- Cálculo de indicadores del Dashboard.
+
+### Ejecutar pruebas
+
+```bash
+npm run test:run
+```
+
+Para ejecutar Vitest en modo interactivo:
+
+```bash
+npm run test
+```
+
+Las evidencias de testing se almacenan en:
+
+```text
+docs/testing/
+```
+
+---
 
 ## Tecnologías utilizadas
 
 - React
 - Vite
 - Bootstrap 5
+- React Router
+- Vitest
 - JavaScript
 - HTML5
 - CSS3
-- LocalStorage
+- localStorage
+
+---
 
 ## Arquitectura actual
 
-Actualmente el proyecto corresponde al frontend funcional del MVP.
+El proyecto corresponde actualmente al **frontend funcional del MVP**.
 
-Los datos se almacenan temporalmente mediante LocalStorage y datos simulados.
+```text
+UI / Pages
+    ↓
+Componentes reutilizables
+    ↓
+Estado React
+    ↓
+Funciones de validación, filtros e indicadores
+    ↓
+Datos simulados + localStorage
+```
 
-La siguiente etapa contempla:
+La solución está organizada por responsabilidad para mantener el código comprensible y facilitar su evolución hacia la etapa Full Stack.
 
-- Backend monolítico
-- API REST
-- Base de datos
-- Persistencia real
-- Integración frontend/backend
+---
 
-El frontend se encuentra organizado por responsabilidad:
-
-- **components/**: componentes reutilizables de la interfaz.
-- **pages/**: vistas principales del sistema.
-- **data/**: datos ficticios utilizados durante la etapa de prototipado.
-- **App.jsx**: componente principal encargado de coordinar el estado general de la aplicación.
-- **main.jsx**: punto de entrada de React.
-- **index.css**: estilos globales y ajustes responsive.
-
-## Componentes principales
-
-| Archivo | Función |
-|---|---|
-| `AppNavbar.jsx` | Barra de navegación y selección de rol simulado |
-| `CandidatoCard.jsx` | Presentación resumida de candidatos |
-| `EstadoBadge.jsx` | Representación visual del estado de una solicitud |
-| `IndicadorCard.jsx` | Tarjetas de indicadores utilizadas en el dashboard |
-| `SolicitudCard.jsx` | Presentación resumida de solicitudes |
-| `CandidatosPage.jsx` | Registro, edición y consulta de candidatos |
-| `DashboardPage.jsx` | Indicadores y resumen general del proceso |
-| `SolicitudesPage.jsx` | Creación, búsqueda, filtrado y gestión de solicitudes |
-| `mockData.js` | Datos ficticios utilizados para demostrar el funcionamiento del MVP |
-
-## 📁 Estructura del proyecto
+## Estructura del proyecto
 
 ```text
 aquachile-psicolaboral-mvp/
@@ -109,7 +203,6 @@ aquachile-psicolaboral-mvp/
 ├── public/
 │
 ├── src/
-│   │
 │   ├── components/
 │   │   ├── AppNavbar.jsx
 │   │   ├── CandidatoCard.jsx
@@ -125,9 +218,25 @@ aquachile-psicolaboral-mvp/
 │   │   ├── DashboardPage.jsx
 │   │   └── SolicitudesPage.jsx
 │   │
+│   ├── tests/
+│   │   ├── filtros.test.js
+│   │   ├── indicadores.test.js
+│   │   └── validaciones.test.js
+│   │
+│   ├── utils/
+│   │   ├── filtros.js
+│   │   ├── indicadores.js
+│   │   └── validaciones.js
+│   │
 │   ├── App.jsx
 │   ├── index.css
 │   └── main.jsx
+│
+├── docs/
+│   ├── ERS_Actualizado.md
+│   └── testing/
+│       ├── casos-prueba.md
+│       └── vitest-resultados.png
 │
 ├── .gitignore
 ├── eslint.config.js
@@ -136,3 +245,145 @@ aquachile-psicolaboral-mvp/
 ├── package-lock.json
 ├── README.md
 └── vite.config.js
+```
+
+---
+
+## Instalación y ejecución
+
+Clonar el repositorio:
+
+```bash
+git clone <URL-DEL-REPOSITORIO>
+```
+
+Entrar al proyecto:
+
+```bash
+cd aquachile-psicolaboral-mvp
+```
+
+Instalar dependencias:
+
+```bash
+npm install
+```
+
+Iniciar el entorno de desarrollo:
+
+```bash
+npm run dev
+```
+
+---
+
+## Comandos de verificación
+
+### Pruebas
+
+```bash
+npm run test:run
+```
+
+### Build de producción
+
+```bash
+npm run build
+```
+
+### Revisión con ESLint
+
+```bash
+npm run lint
+```
+
+---
+
+## Alcance de la Evaluación Parcial 2
+
+En esta etapa se encuentra implementado:
+
+- Frontend desarrollado en React.
+- Diseño responsive con Bootstrap 5.
+- Componentes reutilizables.
+- Props.
+- Arrays y `.map()`.
+- `useState`.
+- Eventos.
+- Búsqueda y filtros.
+- Renderizado condicional.
+- Formularios con validaciones.
+- Navegación con React Router.
+- Flujo integrado entre candidatos, solicitudes y evaluaciones.
+- Datos ficticios.
+- Persistencia temporal con `localStorage`.
+- Pruebas unitarias con Vitest.
+
+---
+
+## Próxima etapa Full Stack
+
+La Evaluación Parcial 2 corresponde a un avance del frontend. Por lo tanto, quedan fuera del alcance actual:
+
+- Backend monolítico.
+- API REST.
+- Base de datos real.
+- Autenticación real.
+- Persistencia definitiva.
+- Integración frontend/backend.
+- Despliegue final Full Stack.
+
+Estas capacidades serán incorporadas en la siguiente etapa del MVP.
+
+---
+
+## Correspondencia con la problemática VcM
+
+Las funcionalidades implementadas permiten centralizar en un mismo flujo información que, dentro del caso académico, puede encontrarse fragmentada entre distintos registros.
+
+El MVP permite consultar:
+
+- quién es el candidato;
+- a qué cargo postula;
+- qué solicitud tiene asociada;
+- quién es responsable de la evaluación;
+- en qué estado se encuentra;
+- cuándo fue solicitada y evaluada;
+- qué observaciones generales se registraron.
+
+De esta manera, el frontend aporta una primera capa de **orden, seguimiento y trazabilidad** al proceso psicolaboral planteado en el caso.
+
+---
+
+## Estado del proyecto
+
+**Evaluación Parcial 2 — Frontend funcional**
+
+- [x] React + Vite
+- [x] Bootstrap 5
+- [x] Diseño responsive
+- [x] Componentes reutilizables
+- [x] Props y `.map()`
+- [x] Estado con `useState`
+- [x] Eventos y condicionales
+- [x] Formularios y validaciones
+- [x] React Router
+- [x] Búsqueda y filtros
+- [x] Datos ficticios
+- [x] localStorage
+- [x] Vitest
+- [ ] Backend
+- [ ] Base de datos real
+- [ ] API REST
+- [ ] Integración Full Stack
+- [ ] Despliegue final
+
+---
+
+## Autor
+
+**Carlos Leal**  
+Estudiante de Ingeniería en Informática  
+Duoc UC
+
+Proyecto académico desarrollado para **Desarrollo Full Stack II — DSY1104**.

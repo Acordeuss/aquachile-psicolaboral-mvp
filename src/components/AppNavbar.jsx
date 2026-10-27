@@ -1,18 +1,22 @@
+import { NavLink } from "react-router-dom";
+
 function AppNavbar({
   rol,
   setRol
 }) {
+  const claseLink = ({ isActive }) =>
+    `nav-link ${isActive ? "active" : ""}`;
+
   return (
     <nav className="navbar navbar-expand-lg navbar-dark bg-dark sticky-top shadow-sm">
-
       <div className="container">
 
-        <a
+        <NavLink
           className="navbar-brand fw-bold"
-          href="#inicio"
+          to="/"
         >
           AquaChile · Psicolaboral
-        </a>
+        </NavLink>
 
         <button
           className="navbar-toggler"
@@ -30,40 +34,36 @@ function AppNavbar({
           className="collapse navbar-collapse"
           id="menuPrincipal"
         >
-
           <div className="navbar-nav ms-auto align-items-lg-center gap-lg-2">
 
-            <a
-              className="nav-link"
-              href="#inicio"
+            <NavLink
+              className={claseLink}
+              to="/"
+              end
             >
               Inicio
-            </a>
+            </NavLink>
 
-            <a
-              className="nav-link"
-              href="#candidatos"
+            <NavLink
+              className={claseLink}
+              to="/candidatos"
             >
               Candidatos
-            </a>
+            </NavLink>
 
-            <a
-              className="nav-link"
-              href="#solicitudes"
+            <NavLink
+              className={claseLink}
+              to="/solicitudes"
             >
               Solicitudes
-            </a>
+            </NavLink>
 
             <select
               className="form-select form-select-sm ms-lg-3 mt-2 mt-lg-0"
-              style={{
-                width: "220px"
-              }}
+              style={{ width: "220px" }}
               value={rol}
               onChange={evento =>
-                setRol(
-                  evento.target.value
-                )
+                setRol(evento.target.value)
               }
             >
               <option value="Analista de Reclutamiento">
@@ -76,11 +76,9 @@ function AppNavbar({
             </select>
 
           </div>
-
         </div>
 
       </div>
-
     </nav>
   );
 }

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { validarCandidato } from "../utils/validaciones";
 
 function CandidatosPage({
   candidatos,
@@ -72,33 +73,11 @@ function CandidatosPage({
 
     setMensaje("");
 
-    if (
-      !formulario.nombre.trim() ||
-      !formulario.correo.trim() ||
-      !formulario.telefono.trim() ||
-      !formulario.cargo.trim() ||
-      !formulario.familiaCargo.trim()
-    ) {
-      setMensaje(
-        "Todos los campos son obligatorios."
-      );
-      return;
-    }
+    const error =
+      validarCandidato(formulario);
 
-    const regexCorreo =
-      /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-    if (!regexCorreo.test(formulario.correo)) {
-      setMensaje(
-        "Ingrese un correo electrónico válido."
-      );
-      return;
-    }
-
-    if (formulario.telefono.trim().length < 8) {
-      setMensaje(
-        "Ingrese un número de teléfono válido."
-      );
+    if (error) {
+      setMensaje(error);
       return;
     }
 

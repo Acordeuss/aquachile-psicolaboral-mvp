@@ -1,5 +1,7 @@
 import { useState } from "react";
 import EstadoBadge from "../components/EstadoBadge";
+import { filtrarSolicitudes } from "../utils/filtros";
+import { validarEvaluacion } from "../utils/validaciones";
 
 function obtenerFechaActualLocal() {
   const hoy = new Date();
@@ -167,29 +169,13 @@ function SolicitudesPage({
       return;
     }
 
-    if (
-      solicitudSeleccionada.estado !==
-        "Pendiente" &&
-      !solicitudSeleccionada
-        .fechaEvaluacion
-    ) {
-      setMensajeEvaluacion(
-        "Debe ingresar la fecha de evaluación para continuar con este estado."
-      );
-      return;
-    }
-
-    if (
-      solicitudSeleccionada.estado ===
-        "Finalizada" &&
-      !(
+    const error =
+      validarEvaluacion(
         solicitudSeleccionada
-          .observaciones || ""
-      ).trim()
-    ) {
-      setMensajeEvaluacion(
-        "Para finalizar una evaluación debe registrar observaciones o un resultado general."
       );
+
+    if (error) {
+      setMensajeEvaluacion(error);
       return;
     }
 
@@ -206,41 +192,11 @@ function SolicitudesPage({
   }
 
   const solicitudesFiltradas =
-    solicitudes.filter(
-      solicitud => {
-        const texto =
-          `${
-            solicitud.candidatoNombre
-          } ${
-            solicitud.cargo
-          } ${
-            solicitud.familiaCargo
-          } ${
-            solicitud.responsable
-          }`
-            .toLowerCase();
-
-        const coincideBusqueda =
-          texto.includes(
-            busqueda.toLowerCase()
-          );
-
-        const coincideEstado =
-          !filtroEstado ||
-          solicitud.estado ===
-            filtroEstado;
-
-        const coincideFecha =
-          !filtroFecha ||
-          solicitud.fechaSolicitud ===
-            filtroFecha;
-
-        return (
-          coincideBusqueda &&
-          coincideEstado &&
-          coincideFecha
-        );
-      }
+    filtrarSolicitudes(
+      solicitudes,
+      busqueda,
+      filtroEstado,
+      filtroFecha
     );
 
   return (

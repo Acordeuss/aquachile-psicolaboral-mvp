@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Navigate, Route, Routes } from "react-router-dom";
 
 import AppNavbar from "./components/AppNavbar";
 import DashboardPage from "./pages/DashboardPage";
@@ -9,6 +10,9 @@ import {
   candidatosIniciales,
   solicitudesIniciales
 } from "./data/mockData";
+
+
+
 
 function obtenerDatosLocales(clave, datosIniciales) {
   try {
@@ -127,25 +131,47 @@ function App() {
         setRol={setRol}
       />
 
-      <DashboardPage
-        candidatos={candidatos}
-        solicitudes={solicitudes}
-      />
+      <Routes>
+        <Route
+          path="/"
+          element={
+            <DashboardPage
+              candidatos={candidatos}
+              solicitudes={solicitudes}
+            />
+          }
+        />
 
-      <CandidatosPage
-        candidatos={candidatos}
-        onAgregar={agregarCandidato}
-        onActualizar={actualizarCandidato}
-        rol={rol}
-      />
+        <Route
+          path="/candidatos"
+          element={
+            <CandidatosPage
+              candidatos={candidatos}
+              onAgregar={agregarCandidato}
+              onActualizar={actualizarCandidato}
+              rol={rol}
+            />
+          }
+        />
 
-      <SolicitudesPage
-        candidatos={candidatos}
-        solicitudes={solicitudes}
-        onAgregar={agregarSolicitud}
-        onActualizar={actualizarSolicitud}
-        rol={rol}
-      />
+        <Route
+          path="/solicitudes"
+          element={
+            <SolicitudesPage
+              candidatos={candidatos}
+              solicitudes={solicitudes}
+              onAgregar={agregarSolicitud}
+              onActualizar={actualizarSolicitud}
+              rol={rol}
+            />
+          }
+        />
+
+        <Route
+          path="*"
+          element={<Navigate to="/" replace />}
+        />
+      </Routes>
 
       <footer className="bg-dark text-white py-4 mt-5">
         <div className="container text-center">

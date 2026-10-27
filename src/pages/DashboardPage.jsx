@@ -2,39 +2,35 @@
 import IndicadorCard from "../components/IndicadorCard";
 import CandidatoCard from "../components/CandidatoCard";
 import SolicitudCard from "../components/SolicitudCard";
+import { Link } from "react-router-dom";
+import { obtenerIndicadores } from "../utils/indicadores";
 
 function DashboardPage({ candidatos, solicitudes }) {
-  const pendientes = solicitudes.filter(
-    solicitud => solicitud.estado === "Pendiente"
-  ).length;
-
-  const enProceso = solicitudes.filter(
-    solicitud => solicitud.estado === "En proceso"
-  ).length;
-
-  const finalizadas = solicitudes.filter(
-    solicitud => solicitud.estado === "Finalizada"
-  ).length;
+  const resumen =
+    obtenerIndicadores(
+      candidatos,
+      solicitudes
+    );
 
   const indicadores = [
     {
       id: 1,
-      valor: candidatos.length,
+      valor: resumen.candidatos,
       titulo: "Candidatos"
     },
     {
       id: 2,
-      valor: pendientes,
+      valor: resumen.pendientes,
       titulo: "Pendientes"
     },
     {
       id: 3,
-      valor: enProceso,
+      valor: resumen.enProceso,
       titulo: "En proceso"
     },
     {
       id: 4,
-      valor: finalizadas,
+      valor: resumen.finalizadas,
       titulo: "Finalizadas"
     }
   ];
@@ -72,12 +68,12 @@ function DashboardPage({ candidatos, solicitudes }) {
             Candidatos recientes
           </h2>
 
-          <a
-            href="#candidatos"
+          <Link
+            to="/candidatos"
             className="btn btn-sm btn-outline-primary"
           >
             Ver candidatos
-          </a>
+          </Link>
         </div>
 
         <div className="row g-3">
@@ -100,12 +96,12 @@ function DashboardPage({ candidatos, solicitudes }) {
             Solicitudes recientes
           </h2>
 
-          <a
-            href="#solicitudes"
+          <Link
+            to="/solicitudes"
             className="btn btn-sm btn-outline-primary"
           >
             Ver solicitudes
-          </a>
+          </Link>
         </div>
 
         <div className="row g-3">
